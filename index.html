@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>點點心情小卡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F6EDEB;--ink:#2A1E1E;--muted:#6B4A4A;--card:#FFFFFF;--line:#E7CFCB;--red:#E2231A;--red-ink:#B5160F;--field:#FFFFFF;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1B1414;--ink:#F3E9E7;--muted:#C9AFAB;--line:#4A3533;--field:#2A1F1F;--red-ink:#FF7A70;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1B1414;--ink:#F3E9E7;--muted:#C9AFAB;--line:#4A3533;--field:#2A1F1F;--red-ink:#FF7A70;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.6}
+.wrap{max-width:520px;margin:0 auto;padding:24px 16px 60px}
+.card{background:#FFFFFF;color:#2A1E1E;border-radius:28px;overflow:hidden;box-shadow:0 10px 30px rgba(120,40,30,.12);text-align:center;padding-bottom:24px}
+.ch{position:relative}
+.bubble{position:absolute;left:50%;top:10px;transform:translateX(-50%);background:#FFFFFF;border:3px solid #E2231A;border-radius:22px;padding:8px 16px;font-family:"Huninn","Noto Sans TC",sans-serif;font-size:17px;max-width:86%;line-height:1.4;opacity:0;transition:opacity .3s, transform .3s;pointer-events:none}
+.bubble.on{opacity:1;transform:translateX(-50%) translateY(4px)}
+h1{margin:-6px 0 0;font-family:"Huninn","Noto Sans TC",sans-serif;font-weight:400;font-size:clamp(34px,9vw,46px);color:#E2231A;line-height:1.1}
+.sub{margin:6px 0 0;font-weight:700;letter-spacing:.12em;color:#6B4A4A}
+.q{margin:14px 16px 0;font-family:"Huninn","Noto Sans TC",sans-serif;font-size:21px}
+.moods{display:flex;justify-content:center;gap:clamp(8px,3vw,18px);margin-top:14px;flex-wrap:wrap;border:0;padding:0}
+.mood{position:relative}
+.mood input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer;width:100%;height:100%}
+.mood label{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font-size:15px;color:#4A3A3A;padding:4px;min-width:52px}
+.mood .d{width:42px;height:42px;border-radius:50%;background:var(--c);transition:transform .2s, box-shadow .2s}
+.mood input:checked+label .d{transform:scale(1.22);box-shadow:0 0 0 4px #FFFFFF,0 0 0 7px var(--c)}
+.mood input:checked+label{font-weight:700;color:#2A1E1E}
+.mood input:focus-visible+label{outline:3px solid #E2231A;outline-offset:2px;border-radius:12px}
+.form{margin-top:22px;display:grid;gap:14px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:420px){.row{grid-template-columns:1fr}}
+label.l{display:block;font-weight:700;margin-bottom:4px}
+input[type=text],input[type=date],textarea{width:100%;font:inherit;color:var(--ink);background:var(--field);border:2px solid var(--line);border-radius:14px;padding:10px 12px}
+textarea{min-height:110px;resize:vertical}
+input:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn{flex:1;min-width:150px;appearance:none;font:inherit;font-weight:700;font-size:17px;border-radius:999px;padding:12px 18px;cursor:pointer;border:2px solid var(--red);background:var(--red);color:#FFFFFF}
+.btn.ghost{background:transparent;color:var(--red-ink);border-color:var(--red-ink)}
+.msg{min-height:1.5em;font-size:14.5px;color:var(--muted);text-align:center}
+.msg.err{color:var(--red-ink)}
+.count{font-size:13.5px;color:var(--muted);text-align:right;margin-top:2px}
+.wall{margin-top:22px;background:var(--card);border-radius:24px;padding:16px;box-shadow:0 6px 20px rgba(120,40,30,.08)}
+.wall h2{margin:0;font-family:"Huninn","Noto Sans TC",sans-serif;font-weight:400;font-size:22px;color:#2A1E1E}
+.wall .hint{margin:2px 0 12px;font-size:14px;color:#6B4A4A}
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tools .lbl{font-weight:700;font-size:15px;color:#2A1E1E;margin-right:2px}
+.sz{position:relative}
+.sz input{position:absolute;opacity:0;inset:0;margin:0;width:100%;height:100%;cursor:pointer}
+.sz label{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;border:2px solid #E7CFCB;background:#FFFFFF;cursor:pointer}
+.sz label span{display:block;border-radius:50%;background:var(--cur,#C9B5B2)}
+.sz input:checked+label{border-color:#E2231A;background:#FFF0EE}
+.sz input:focus-visible+label{outline:3px solid #E2231A;outline-offset:2px}
+.mini{appearance:none;font:inherit;font-size:14px;font-weight:700;border-radius:999px;padding:8px 14px;min-height:44px;cursor:pointer;border:2px solid #E7CFCB;background:#FFFFFF;color:#6B4A4A}
+.board{position:relative;width:100%;aspect-ratio:4/3;background:#FFFFFF;border:2px dashed #E7CFCB;border-radius:18px;overflow:hidden;cursor:crosshair;touch-action:manipulation}
+.board svg{position:absolute;inset:0;width:100%;height:100%}
+.board .empty{position:absolute;inset:0;display:grid;place-items:center;color:#B09592;font-size:15px;pointer-events:none;text-align:center;padding:16px}
+.board circle{animation:pop .25s ease-out}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.board circle{transform-box:fill-box;transform-origin:center}
+.wall .stat{margin:8px 2px 0;font-size:14px;color:#6B4A4A}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="ch">
+      <svg viewBox="0 0 600 560" role="img" aria-label="點點：一個佈滿紅白圓點、頂著紅色鮑伯頭的圓滾滾小角色" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:auto">
+<circle cx="40" cy="60" r="22" fill="#E2231A" opacity="0.9"></circle><circle cx="96" cy="30" r="10" fill="#E2231A" opacity="0.9"></circle><circle cx="560" cy="90" r="26" fill="#E2231A" opacity="0.9"></circle><circle cx="520" cy="40" r="9" fill="#E2231A" opacity="0.9"></circle><circle cx="30" cy="150" r="8" fill="#E2231A" opacity="0.9"></circle><circle cx="575" cy="190" r="12" fill="#E2231A" opacity="0.9"></circle><circle cx="50" cy="560" r="14" fill="#E2231A" opacity="0.9"></circle><circle cx="560" cy="600" r="18" fill="#E2231A" opacity="0.9"></circle><circle cx="20" cy="640" r="7" fill="#E2231A" opacity="0.9"></circle><circle cx="585" cy="520" r="8" fill="#E2231A" opacity="0.9"></circle>
+<ellipse cx="300" cy="512" rx="120" ry="14" fill="#F1D9D6"></ellipse>
+<ellipse cx="248" cy="494" rx="34" ry="20" fill="#E2231A"></ellipse>
+<ellipse cx="352" cy="494" rx="34" ry="20" fill="#E2231A"></ellipse>
+<ellipse cx="150" cy="370" rx="26" ry="38" transform="rotate(28 150 370)" fill="#E2231A"></ellipse>
+<ellipse cx="452" cy="340" rx="26" ry="38" transform="rotate(-40 452 340)" fill="#E2231A"></ellipse>
+<circle cx="146" cy="364" r="7" fill="#FFFFFF"></circle>
+<circle cx="458" cy="334" r="7" fill="#FFFFFF"></circle>
+<circle cx="300" cy="350" r="150" fill="#E2231A"></circle>
+<circle cx="176" cy="360" r="13" fill="#FFFFFF"></circle><circle cx="324" cy="469" r="11" fill="#FFFFFF"></circle><circle cx="166" cy="331" r="9" fill="#FFFFFF"></circle><circle cx="395" cy="241" r="11" fill="#FFFFFF"></circle><circle cx="244" cy="442" r="11" fill="#FFFFFF"></circle><circle cx="290" cy="473" r="13" fill="#FFFFFF"></circle><circle cx="179" cy="292" r="15" fill="#FFFFFF"></circle><circle cx="409" cy="417" r="13" fill="#FFFFFF"></circle><circle cx="276" cy="425" r="11" fill="#FFFFFF"></circle><circle cx="426" cy="327" r="9" fill="#FFFFFF"></circle><circle cx="173" cy="408" r="18" fill="#FFFFFF"></circle><circle cx="363" cy="462" r="13" fill="#FFFFFF"></circle><circle cx="345" cy="420" r="15" fill="#FFFFFF"></circle><circle cx="430" cy="383" r="9" fill="#FFFFFF"></circle><circle cx="309" cy="431" r="13" fill="#FFFFFF"></circle><circle cx="389" cy="442" r="11" fill="#FFFFFF"></circle><circle cx="230" cy="406" r="13" fill="#FFFFFF"></circle><circle cx="395" cy="374" r="11" fill="#FFFFFF"></circle><circle cx="419" cy="288" r="9" fill="#FFFFFF"></circle><circle cx="242" cy="479" r="11" fill="#FFFFFF"></circle><circle cx="227" cy="224" r="9" fill="#FFFFFF"></circle><circle cx="443" cy="352" r="11" fill="#FFFFFF"></circle><circle cx="200" cy="250" r="11" fill="#FFFFFF"></circle><circle cx="401" cy="345" r="9" fill="#FFFFFF"></circle><circle cx="203" cy="455" r="15" fill="#FFFFFF"></circle><circle cx="196" cy="323" r="9" fill="#FFFFFF"></circle><circle cx="259" cy="397" r="9" fill="#FFFFFF"></circle><circle cx="406" cy="267" r="9" fill="#FFFFFF"></circle><circle cx="215" cy="362" r="9" fill="#FFFFFF"></circle><circle cx="377" cy="413" r="9" fill="#FFFFFF"></circle><circle cx="312" cy="494" r="9" fill="#FFFFFF"></circle>
+<path d="M196 330 C190 230 240 170 300 170 C360 170 410 230 404 330 L404 352 C404 362 392 366 384 360 L384 300 L216 300 L216 360 C208 366 196 362 196 352 Z" fill="#C8102E"></path>
+<ellipse cx="300" cy="318" rx="84" ry="74" fill="#FFF6EE"></ellipse>
+<path d="M216 300 C216 230 252 196 300 196 C348 196 384 230 384 300 L384 268 L216 268 Z" fill="#C8102E"></path>
+<path d="M214 274 L386 274 L386 254 C380 214 344 192 300 192 C256 192 220 214 214 254 Z" fill="#C8102E"></path>
+<circle cx="268" cy="318" r="15" fill="#1E1A1A"></circle>
+<circle cx="332" cy="318" r="15" fill="#1E1A1A"></circle>
+<circle cx="273" cy="312" r="5" fill="#FFFFFF"></circle>
+<circle cx="337" cy="312" r="5" fill="#FFFFFF"></circle>
+<ellipse cx="246" cy="348" rx="13" ry="8" fill="#F7A1A1"></ellipse>
+<ellipse cx="354" cy="348" rx="13" ry="8" fill="#F7A1A1"></ellipse>
+<path d="M286 350 Q300 364 314 350" fill="none" stroke="#1E1A1A" stroke-width="5" stroke-linecap="round"></path>
+<circle cx="372" cy="214" r="14" fill="#FFD23F"></circle>
+<circle cx="372" cy="214" r="6" fill="#E2231A"></circle>
+</svg>
+      <div class="bubble" id="bubble" aria-live="polite"></div>
+    </div>
+    <h1>嗨！我是點點</h1>
+    <p class="sub">點亮心靈小幫手</p>
+    <p class="q" id="moodq">今天的心情，是什麼顏色的點點呢？</p>
+    <div class="moods" role="radiogroup" aria-labelledby="moodq">
+      <div class="mood" style="--c:#5A6C9C"><input type="radio" name="mood" id="m1" value="1"><label for="m1"><span class="d"></span>疲憊</label></div>
+      <div class="mood" style="--c:#5E8C6E"><input type="radio" name="mood" id="m2" value="2"><label for="m2"><span class="d"></span>平靜</label></div>
+      <div class="mood" style="--c:#D9A12A"><input type="radio" name="mood" id="m3" value="3"><label for="m3"><span class="d"></span>期待</label></div>
+      <div class="mood" style="--c:#C8695A"><input type="radio" name="mood" id="m4" value="4"><label for="m4"><span class="d"></span>焦慮</label></div>
+      <div class="mood" style="--c:#B4447A"><input type="radio" name="mood" id="m5" value="5"><label for="m5"><span class="d"></span>興奮</label></div>
+    </div>
+  </div>
+
+  <section class="wall" aria-labelledby="wallT">
+    <h2 id="wallT">我的心情點點牆</h2>
+    <p class="hint">先在上面選一個心情顏色，再選大小，點一下空白處就能貼上點點。</p>
+    <div class="tools" role="radiogroup" aria-label="點點大小">
+      <span class="lbl">大小</span>
+      <div class="sz"><input type="radio" name="size" id="s1" value="0.022"><label for="s1" title="小"><span style="width:10px;height:10px"></span><span class="vh" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">小</span></label></div>
+      <div class="sz"><input type="radio" name="size" id="s2" value="0.04" checked><label for="s2" title="中"><span style="width:18px;height:18px"></span><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">中</span></label></div>
+      <div class="sz"><input type="radio" name="size" id="s3" value="0.07"><label for="s3" title="大"><span style="width:28px;height:28px"></span><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">大</span></label></div>
+      <div class="sz"><input type="radio" name="size" id="s4" value="0.11"><label for="s4" title="特大"><span style="width:38px;height:38px"></span><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">特大</span></label></div>
+      <button class="mini" type="button" id="rnd">隨機貼一個</button>
+      <button class="mini" type="button" id="undo">復原</button>
+      <button class="mini" type="button" id="clr">清空</button>
+    </div>
+    <div class="board" id="board" aria-label="點點牆，點一下空白處貼上點點">
+      <svg id="bsvg" viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <div class="empty" id="bempty">這裡還是空白的，貼上第一個點點吧！</div>
+    </div>
+    <p class="stat" id="stat" aria-live="polite"></p>
+  </section>
+
+  <div class="form">
+    <div class="row">
+      <div><label class="l" for="name">姓名</label><input type="text" id="name" autocomplete="name" placeholder="寫下你的名字"></div>
+      <div><label class="l" for="date">日期</label><input type="date" id="date"></div>
+    </div>
+    <div>
+      <label class="l" for="note">心情紀錄</label>
+      <textarea id="note" maxlength="300" placeholder="今天發生了什麼？為什麼是這個顏色的點點？"></textarea>
+      <div class="count" id="count">0 / 300</div>
+    </div>
+    <div class="btns">
+      <button class="btn" type="button" id="dlPng">下載心情小卡（圖片）</button>
+      <button class="btn ghost" type="button" id="dlTxt">下載文字紀錄</button>
+    </div>
+    <p class="msg" id="msg" role="status"></p>
+  </div>
+</div>
+
+<script>
+const MOODS={1:{n:"疲憊",c:"#5A6C9C",s:"累了也沒關係，先深呼吸三次吧。"},2:{n:"平靜",c:"#5E8C6E",s:"好平穩的心，帶著它慢慢創作吧。"},3:{n:"期待",c:"#D9A12A",s:"好奇心是最棒的顏料！"},4:{n:"焦慮",c:"#C8695A",s:"緊張很正常，點點陪你一步一步來。"},5:{n:"興奮",c:"#B4447A",s:"好有能量！試著把它畫進作品裡吧。"}};
+const $=s=>document.querySelector(s);
+const svgEl=document.querySelector(".ch svg");
+
+$("#date").value=new Date().toLocaleDateString("sv-SE");
+try{ const n=localStorage.getItem("diandian-name"); if(n) $("#name").value=n; }catch(e){}
+$("#name").addEventListener("change",()=>{ try{localStorage.setItem("diandian-name",$("#name").value.trim());}catch(e){} });
+$("#note").addEventListener("input",()=>{ $("#count").textContent=$("#note").value.length+" / 300"; });
+let mood=null;
+document.querySelectorAll("input[name=mood]").forEach(r=>r.addEventListener("change",()=>{
+  mood=+r.value; const b=$("#bubble"); b.textContent=MOODS[mood].s; b.style.borderColor=MOODS[mood].c; b.classList.add("on");
+}));
+// ---- dot wall ----
+const board=$("#board"), bsvg=$("#bsvg"); const NS="http://www.w3.org/2000/svg";
+let dots=[];
+function curSize(){ return +document.querySelector("input[name=size]:checked").value; }
+function paintSizeSwatches(){ const c=mood?MOODS[mood].c:"#C9B5B2"; document.querySelectorAll(".sz label > span:first-child").forEach(s=>s.style.background=c); }
+document.querySelectorAll("input[name=mood]").forEach(r=>r.addEventListener("change",paintSizeSwatches));
+function renderDots(){
+  bsvg.textContent="";
+  dots.forEach(d=>{ const c=document.createElementNS(NS,"ellipse"); c.setAttribute("cx",d.x*400); c.setAttribute("cy",d.y*300); c.setAttribute("rx",d.r*400); c.setAttribute("ry",d.r*400); c.setAttribute("fill",d.c); bsvg.appendChild(c); });
+  $("#bempty").hidden=dots.length>0;
+  const cnt={}; dots.forEach(d=>cnt[d.m]=(cnt[d.m]||0)+1);
+  $("#stat").textContent=dots.length?("已貼 "+dots.length+" 個點點："+Object.keys(cnt).map(k=>MOODS[k].n+" "+cnt[k]).join("、")):"";
+}
+function addDot(x,y){
+  if(!mood){ setMsg("先在小卡上選一個心情顏色，才能貼點點喔！",true); $("#moodq").scrollIntoView({behavior:"smooth",block:"center"}); return; }
+  setMsg(""); dots.push({x,y,r:curSize(),c:MOODS[mood].c,m:mood}); renderDots();
+}
+board.addEventListener("click",e=>{ const b=board.getBoundingClientRect(); addDot((e.clientX-b.left)/b.width,(e.clientY-b.top)/b.height); });
+$("#rnd").addEventListener("click",()=>addDot(0.06+Math.random()*0.88,0.08+Math.random()*0.84));
+$("#undo").addEventListener("click",()=>{ dots.pop(); renderDots(); });
+$("#clr").addEventListener("click",()=>{ if(dots.length && confirm("確定要清空所有點點嗎？")){ dots=[]; renderDots(); } });
+
+function setMsg(t,err){ const m=$("#msg"); m.textContent=t; m.className="msg"+(err?" err":""); }
+function data(){ return {name:$("#name").value.trim(),date:$("#date").value,mood,note:$("#note").value.trim()}; }
+function check(d){ if(!d.name) return "請先寫下你的姓名。"; if(!d.date) return "請選擇日期。"; if(!d.mood) return "請選一個代表今天心情的點點。"; return ""; }
+function fname(d,ext){ return `點點心情小卡_${d.name.replace(/[\\/:*?"<>|\s]/g,"")}_${d.date}.${ext}`; }
+async function save(filename,payload){
+  try{
+    const blob = payload instanceof Blob ? payload : new Blob(["\uFEFF"+payload],{type:"text/plain;charset=utf-8"});
+    if(window.navigator && navigator.msSaveOrOpenBlob){ navigator.msSaveOrOpenBlob(blob,filename); setMsg("已下載："+filename); return true; }
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a"); a.href=url; a.download=filename; a.rel="noopener";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    setMsg("已下載："+filename+"（若沒有出現，請檢查瀏覽器的下載資料夾）");
+    return true;
+  }catch(e){ setMsg("下載未完成，請再試一次。",true); return false; }
+}
+$("#dlTxt").addEventListener("click",()=>{
+  const d=data(); const v=check(d); if(v){ setMsg(v,true); return; }
+  const t=["點點心情小卡","","姓名："+d.name,"日期："+d.date,"今天的心情點點："+MOODS[d.mood].n,"點點牆："+($("#stat").textContent||"還沒有貼點點"),"","心情紀錄：",d.note||"（未填寫）","","點點想對你說："+MOODS[d.mood].s].join("\n");
+  save(fname(d,"txt"),t);
+});
+function wrapText(ctx,text,maxW){ const lines=[]; let line=""; for(const ch of text){ if(ch==="\n"){ lines.push(line); line=""; continue; } const t=line+ch; if(ctx.measureText(t).width>maxW && line){ lines.push(line); line=ch; } else line=t; } if(line) lines.push(line); return lines; }
+function rr(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+$("#dlPng").addEventListener("click",async()=>{
+  const d=data(); const v=check(d); if(v){ setMsg(v,true); return; }
+  setMsg("正在製作小卡…");
+  try{
+    await Promise.all([document.fonts.load('40px "Huninn"'),document.fonts.load('700 30px "Noto Sans TC"'),document.fonts.load('500 30px "Noto Sans TC"')]).catch(()=>{});
+    const W=1200,S=2; const m=MOODS[d.mood];
+    const ctx0=document.createElement("canvas").getContext("2d");
+    ctx0.font='500 30px "Noto Sans TC", sans-serif';
+    const noteLines=d.note?wrapText(ctx0,d.note,W-260):[];
+    const INFO_H=410+Math.max(1,noteLines.length)*46;
+    const BW=W-180, BH=Math.round(BW*3/4);
+    const WALL=dots.length?(70+BH+60):0;
+    const H=1320+INFO_H+90+WALL;
+    const cv=document.createElement("canvas"); cv.width=W; cv.height=H; const ctx=cv.getContext("2d");
+    ctx.fillStyle="#FFFFFF"; ctx.fillRect(0,0,W,H);
+    const xml=new XMLSerializer().serializeToString(svgEl);
+    const img=new Image(); img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(xml);
+    await img.decode();
+    ctx.drawImage(img,0,0,W,W*560/600);
+    ctx.textAlign="center"; ctx.textBaseline="alphabetic";
+    ctx.fillStyle="#E2231A"; ctx.font='96px "Huninn", "Noto Sans TC", sans-serif'; ctx.fillText("嗨！我是點點",W/2,1180);
+    ctx.fillStyle="#6B4A4A"; ctx.font='700 38px "Noto Sans TC", sans-serif'; ctx.fillText("點 亮 心 靈 小 幫 手",W/2,1250);
+    let y=1320;
+    rr(ctx,90,y,W-180,INFO_H,40); ctx.fillStyle="#FBF3F1"; ctx.fill();
+    ctx.textAlign="left"; y+=80;
+    ctx.fillStyle="#2A1E1E"; ctx.font='700 38px "Noto Sans TC", sans-serif';
+    ctx.fillText("姓名："+d.name,140,y);
+    ctx.textAlign="right"; ctx.fillText(d.date.replace(/-/g,"/"),W-140,y); ctx.textAlign="left";
+    y+=90;
+    ctx.beginPath(); ctx.arc(170,y-14,34,0,Math.PI*2); ctx.fillStyle=m.c; ctx.fill();
+    ctx.fillStyle="#2A1E1E"; ctx.font='42px "Huninn", "Noto Sans TC", sans-serif'; ctx.fillText("今天的心情："+m.n,224,y);
+    y+=86;
+    ctx.font='500 30px "Noto Sans TC", sans-serif'; ctx.fillStyle="#3A2C2C";
+    (noteLines.length?noteLines:["（今天沒有寫下文字，只留下一個點點。）"]).forEach(l=>{ ctx.fillText(l,130,y); y+=46; });
+    y+=30; ctx.fillStyle="#B5160F"; ctx.font='32px "Huninn", "Noto Sans TC", sans-serif'; ctx.fillText("點點想對你說："+m.s,130,y);
+    if(dots.length){
+      let by=1320+INFO_H+60;
+      ctx.textAlign="left"; ctx.fillStyle="#2A1E1E"; ctx.font='42px "Huninn", "Noto Sans TC", sans-serif'; ctx.fillText("我的心情點點牆",90,by+40);
+      by+=70;
+      ctx.save(); rr(ctx,90,by,BW,BH,32); ctx.fillStyle="#FFFFFF"; ctx.fill(); ctx.lineWidth=4; ctx.setLineDash([14,10]); ctx.strokeStyle="#E7CFCB"; ctx.stroke(); ctx.setLineDash([]);
+      ctx.clip();
+      dots.forEach(dt=>{ ctx.beginPath(); ctx.arc(90+dt.x*BW,by+dt.y*BH,dt.r*BW,0,Math.PI*2); ctx.fillStyle=dt.c; ctx.fill(); });
+      ctx.restore();
+    }
+    const blob=await new Promise(r=>cv.toBlob(r,"image/png"));
+    if(!blob) throw new Error("no blob");
+    await save(fname(d,"png"),blob);
+  }catch(e){ setMsg("圖片製作失敗，可以先下載文字紀錄。",true); }
+});
+</script>
+</body>
+</html>
